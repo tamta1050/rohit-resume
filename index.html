@@ -15,7 +15,7 @@
         - Hero/Contact: Goal=Inform. Method=HTML/Icons/Image. Interaction=Links, Animated entrance. Justification=Immediate access to key info and a strong first impression.
         - Experience: Goal=Show Progression. Method=HTML List. Interaction=Dynamic bullet point reveal. Justification=Presents career path clearly with engaging detail reveal.
         - Skills: Goal=Compare/Inform. Method=Chart.js Horizontal Bar Chart. Interaction=Proficiency percentage display, Chart animation on load, Grouping with color legend. Justification=Provides a granular, visual summary of individual technical abilities, making it highly digestible and dynamic, with improved clarity through grouping.
-        - Projects (New): Goal=Showcase Work. Method=HTML Cards. Interaction=Staggered fade-in, hover effects, embedded video player, embedded document viewer. Justification=Highlights practical application of skills with engaging visual presentation and direct media/document playback.
+        - Projects (New): Goal=Showcase Work. Method=HTML Cards. Interaction=Staggered fade-in, hover effects, embedded video player, document link (opens in new tab). Justification=Highlights practical application of skills with engaging visual presentation and direct media/document access.
         - Education/Certs: Goal=Organize. Method=HTML Cards. Interaction=Hover effects (lift/shadow), staggered fade-in on load. Justification=Clearly segments different qualifications for readability and adds a touch of polish.
     -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
@@ -287,7 +287,7 @@
                         </ul>
                         <div class="mt-4 flex flex-wrap gap-3">
                             <a href="https://github.com/tamta1050/SpaceX-Coders_056" target="_blank" rel="noopener noreferrer" class="inline-block text-indigo-600 hover:underline font-medium text-sm">GitHub Repository</a>
-                            <a href="#" class="document-link inline-block text-indigo-600 hover:underline font-medium text-sm" data-document-url="https://docs.google.com/document/d/18bs1W2LoPMdRRoeHxPmREnyVOX2-ldMaAu9JCdpS1zk/embed">Full Report</a>
+                            <a href="https://docs.google.com/document/d/18bs1W2LoPMdRRoeHxPmREnyVOX2-ldMaAu9JCdpS1zk/edit?usp=sharing" target="_blank" rel="noopener noreferrer" class="inline-block text-indigo-600 hover:underline font-medium text-sm">Full Report</a>
                         </div>
                     </div>
                     <!-- Project 2: OrangeHRM Automation Project -->
@@ -420,7 +420,7 @@
             </div>
         </div>
 
-        <!-- Document Modal -->
+        <!-- Document Modal (kept for structure, but link now opens in new tab) -->
         <div id="documentModal" class="modal-overlay">
             <div class="modal-content">
                 <button class="modal-close" id="closeDocumentModal">&times;</button>
@@ -600,7 +600,7 @@
                 }
             });
 
-            // Document Modal Logic
+            // Document Modal Logic (kept for structure, but link now opens in new tab)
             const documentModal = document.getElementById('documentModal');
             const documentViewer = document.getElementById('documentViewer');
             const closeDocumentModal = document.getElementById('closeDocumentModal'); // Specific close button for document
@@ -608,19 +608,18 @@
 
             documentLinks.forEach(link => {
                 link.addEventListener('click', function(event) {
-                    event.preventDefault(); // Prevent default link behavior
-                    const documentUrl = this.dataset.documentUrl;
-                    documentViewer.src = documentUrl; // Set the iframe src
-                    documentModal.classList.add('show'); // Show the modal
+                    // This link will now open in a new tab directly
+                    window.open(this.href, '_blank');
+                    event.preventDefault(); // Prevent default link behavior (which would try to open modal)
                 });
             });
 
-            closeDocumentModal.addEventListener('click', () => { // Use specific close button
-                documentModal.classList.remove('show'); // Hide the modal
-                documentViewer.src = ''; // Clear the src
+            // These modal close listeners are now effectively unused for document links
+            closeDocumentModal.addEventListener('click', () => {
+                documentModal.classList.remove('show');
+                documentViewer.src = '';
             });
 
-            // Close document modal if clicked outside content
             documentModal.addEventListener('click', (event) => {
                 if (event.target === documentModal) {
                     documentModal.classList.remove('show');
