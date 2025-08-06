@@ -14,8 +14,8 @@
     <!-- Visualization & Content Choices: 
         - Hero/Contact: Goal=Inform. Method=HTML/Icons/Image. Interaction=Links, Animated entrance. Justification=Immediate access to key info and a strong first impression.
         - Experience: Goal=Show Progression. Method=HTML List. Interaction=Dynamic bullet point reveal. Justification=Presents career path clearly with engaging detail reveal.
-        - Skills: Goal=Compare/Inform. Method=Chart.js Bar Chart. Interaction=Tooltips on hover, Chart animation on load. Justification=Provides a quick, visual summary of technical abilities, making it more digestible and dynamic.
-        - Projects (New): Goal=Showcase Work. Method=HTML Cards. Interaction=Staggered fade-in, hover effects. Justification=Highlights practical application of skills with engaging visual presentation.
+        - Skills: Goal=Compare/Inform. Method=Chart.js Horizontal Bar Chart. Interaction=Proficiency percentage display, Chart animation on load, Grouping with color legend. Justification=Provides a granular, visual summary of individual technical abilities, making it highly digestible and dynamic, with improved clarity through grouping.
+        - Projects (New): Goal=Showcase Work. Method=HTML Cards. Interaction=Staggered fade-in, hover effects, embedded video player, embedded document viewer. Justification=Highlights practical application of skills with engaging visual presentation and direct media/document playback.
         - Education/Certs: Goal=Organize. Method=HTML Cards. Interaction=Hover effects (lift/shadow), staggered fade-in on load. Justification=Clearly segments different qualifications for readability and adds a touch of polish.
     -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
@@ -32,12 +32,12 @@
             max-width: 800px;
             margin-left: auto;
             margin-right: auto;
-            height: 350px;
-            max-height: 400px;
+            height: 600px; /* Increased height to accommodate more bars and spacing */
+            max-height: 700px;
         }
         @media (max-width: 768px) {
             .chart-container {
-                height: 400px;
+                height: 650px; /* Adjusted height for mobile */
             }
         }
 
@@ -95,6 +95,66 @@
             opacity: 1;
             transform: translateX(0);
         }
+
+        /* Modal styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.75);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-out, visibility 0.3s ease-out;
+        }
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            background-color: #fff;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            position: relative;
+            width: 90%;
+            max-width: 800px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        .modal-close {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #475569;
+            cursor: pointer;
+            z-index: 1010;
+        }
+        .video-container, .document-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio for video, can adjust for document if needed */
+            height: 0;
+            overflow: hidden;
+            max-width: 100%;
+            background: #000; /* For video */
+        }
+        .document-container {
+            padding-bottom: 120%; /* Adjust for typical document aspect ratio (e.g., A4 portrait) */
+            background: #f0f0f0; /* Light background for documents */
+        }
+        .video-container iframe, .document-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
     </style>
 </head>
 <body class="text-slate-700"> <!-- Changed default text color to dark slate -->
@@ -119,8 +179,7 @@
             <a href="#experience" class="block text-center py-2 px-4 text-sm text-slate-700 hover:bg-slate-100">Experience</a>
             <a href="#skills" class="block text-center py-2 px-4 text-sm text-slate-700 hover:bg-slate-100">Skills</a>
             <a href="#projects" class="block text-center py-2 px-4 text-sm text-slate-700 hover:bg-slate-100">Projects</a>
-            <a href="#education" class="block text-center py-2 px-4 text-sm hover:bg-slate-100">Education</a>
-            <a href="#contact" class="block text-center py-2 px-4 text-sm hover:bg-slate-100">Contact</a>
+            <a href="#education" class="block text-center py-2 px-4 text-sm text-slate-700 hover:bg-slate-100">Contact</a>
         </div>
     </header>
 
@@ -188,6 +247,20 @@
         <section id="skills" class="py-16 md:py-24">
             <div class="container mx-auto px-6">
                 <h2 class="text-3xl font-bold text-slate-800 text-center mb-10">Skills & Expertise</h2> <!-- Darker heading -->
+                <div class="flex flex-col md:flex-row justify-center items-center md:items-start gap-6 mb-10 text-slate-600">
+                    <div class="flex items-center space-x-2">
+                        <span class="w-4 h-4 rounded-full bg-indigo-600"></span>
+                        <span>Testing Methodologies</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="w-4 h-4 rounded-full bg-teal-600"></span>
+                        <span>Automation Tools & Frameworks</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="w-4 h-4 rounded-full bg-purple-600"></span>
+                        <span>Programming Languages</span>
+                    </div>
+                </div>
                 <div class="chart-container animated-content">
                     <canvas id="skillsChart"></canvas>
                 </div>
@@ -214,7 +287,7 @@
                         </ul>
                         <div class="mt-4 flex flex-wrap gap-3">
                             <a href="https://github.com/tamta1050/SpaceX-Coders_056" target="_blank" rel="noopener noreferrer" class="inline-block text-indigo-600 hover:underline font-medium text-sm">GitHub Repository</a>
-                            <a href="https://docs.google.com/document/d/18bs1W2LoPMdRRoeHxPmREnyVOX2-ldMaAu9JCdpS1zk/edit?usp=sharing" target="_blank" rel="noopener noreferrer" class="inline-block text-indigo-600 hover:underline font-medium text-sm">Full Report</a>
+                            <a href="#" class="document-link inline-block text-indigo-600 hover:underline font-medium text-sm" data-document-url="https://docs.google.com/document/d/18bs1W2LoPMdRRoeHxPmREnyVOX2-ldMaAu9JCdpS1zk/embed">Full Report</a>
                         </div>
                     </div>
                     <!-- Project 2: OrangeHRM Automation Project -->
@@ -277,7 +350,7 @@
                         </div>
                         <div class="mt-4 flex flex-wrap gap-3">
                             <a href="https://github.com/tamta1050/5554" target="_blank" rel="noopener noreferrer" class="inline-block text-indigo-600 hover:underline font-medium text-sm">GitHub Repository</a>
-                            <a href="https://drive.google.com/file/d/1PdrnCwxgJlgsJ7hZX_mn8W2HiiNwFPa6/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="inline-block text-indigo-600 hover:underline font-medium text-sm">Video Presentation</a>
+                            <a href="#" class="video-link inline-block text-indigo-600 hover:underline font-medium text-sm" data-video-url="https://drive.google.com/file/d/1PdrnCwxgJlgsJ7hZX_mn8W2HiiNwFPa6/preview">Video Presentation</a>
                         </div>
                     </div>
                     <!-- Add more project cards as needed -->
@@ -326,7 +399,7 @@
                         <span>Send Email</span>
                     </a>
                     <a href="https://wa.me/918766314368" target="_blank" rel="noopener noreferrer" class="bg-green-600 hover:bg-green-500 text-white font-bold py-3 px-6 rounded-lg transition-colors inline-flex items-center space-x-2">
-                        <img src="https://i.ibb.co/hqzX7wg/Pngtree-whatsapp-icon-8704827.png" alt="WhatsApp Logo" class="w-5 h-5" />
+                        <img src="https://i.ibb.co/hqzX7wg/Pngtree_whatsapp_icon_8704827.png" alt="WhatsApp Logo" class="w-5 h-5" />
                         <span>WhatsApp</span>
                     </a>
                 </div>
@@ -336,6 +409,26 @@
                 </div>
             </div>
         </footer>
+
+        <!-- Video Modal -->
+        <div id="videoModal" class="modal-overlay">
+            <div class="modal-content">
+                <button class="modal-close" id="closeVideoModal">&times;</button>
+                <div class="video-container">
+                    <iframe id="videoPlayer" src="" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+                </div>
+            </div>
+        </div>
+
+        <!-- Document Modal -->
+        <div id="documentModal" class="modal-overlay">
+            <div class="modal-content">
+                <button class="modal-close" id="closeDocumentModal">&times;</button>
+                <div class="document-container">
+                    <iframe id="documentViewer" src="" frameborder="0" allowfullscreen></iframe>
+                </div>
+            </div>
+        </div>
     </main>
 
     <script>
@@ -358,25 +451,57 @@
             const skillsChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: ['Testing', 'Tools & Technologies', 'Programming Languages'],
+                    labels: [
+                        'Manual Testing (90%)', 'API Testing (70%)', 'Mobile Testing (75%)',
+                        'Test Case Design (90%)', 'Defect Reporting (85%)', 'Regression Testing (85%)',
+                        'POM - Page Object Model (90%)', 'Selenium (80%)', 'TestNG (65%)',
+                        'JavaScript (65%)', 'Java (60%)'
+                    ],
                     datasets: [{
-                        label: 'Skill Areas',
-                        data: [100, 100, 100],
+                        label: 'Proficiency',
+                        data: [
+                            90, 70, 75,
+                            90, 85, 85,
+                            90, 80, 65,
+                            65, 60
+                        ],
                         backgroundColor: [
-                            'rgba(79, 70, 229, 0.7)',  /* indigo-600 for light theme */
-                            'rgba(100, 116, 139, 0.7)', /* slate-500 for light theme */
-                            'rgba(79, 70, 229, 0.5)'   /* indigo-600 lighter for light theme */
+                            /* Testing Methodologies (Indigo) */
+                            'rgba(79, 70, 229, 0.7)',
+                            'rgba(79, 70, 229, 0.7)',
+                            'rgba(79, 70, 229, 0.7)',
+                            'rgba(79, 70, 229, 0.7)',
+                            'rgba(79, 70, 229, 0.7)',
+                            'rgba(79, 70, 229, 0.7)',
+                            /* Automation Tools & Frameworks (Teal) */
+                            'rgba(20, 184, 166, 0.7)', /* teal-500 */
+                            'rgba(20, 184, 166, 0.7)',
+                            'rgba(20, 184, 166, 0.7)',
+                            /* Programming Languages (Purple) */
+                            'rgba(168, 85, 247, 0.7)', /* purple-500 */
+                            'rgba(168, 85, 247, 0.7)'
                         ],
                         borderColor: [
+                            /* Testing Methodologies (Indigo) */
                             'rgba(79, 70, 229, 1)',
-                            'rgba(100, 116, 139, 1)',
-                            'rgba(79, 70, 229, 1)'
+                            'rgba(79, 70, 229, 1)',
+                            'rgba(79, 70, 229, 1)',
+                            'rgba(79, 70, 229, 1)',
+                            'rgba(79, 70, 229, 1)',
+                            'rgba(79, 70, 229, 1)',
+                            /* Automation Tools & Frameworks (Teal) */
+                            'rgba(20, 184, 166, 1)',
+                            'rgba(20, 184, 166, 1)',
+                            'rgba(20, 184, 166, 1)',
+                            /* Programming Languages (Purple) */
+                            'rgba(168, 85, 247, 1)',
+                            'rgba(168, 85, 247, 1)'
                         ],
                         borderWidth: 1
                     }]
                 },
                 options: {
-                    indexAxis: 'y',
+                    indexAxis: 'y', // Horizontal bars
                     responsive: true,
                     maintainAspectRatio: false,
                     animation: {
@@ -390,22 +515,19 @@
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    // Corrected logic to display specific skills for each category
-                                    if (context.dataIndex === 0) {
-                                        return [' Manual Testing', ' API Testing', ' Mobile Testing', ' Test Case Design', ' Defect Reporting', ' Regression Testing'];
-                                    } else if (context.dataIndex === 1) {
-                                        return [' Cypress', ' Selenium'];
-                                    } else if (context.dataIndex === 2) {
-                                        return [' JavaScript', ' Java'];
-                                    }
-                                    return '';
+                                    // Display the label directly from the chart data
+                                    return context.label;
+                                },
+                                title: function() {
+                                    return ''; // Hide the default title (which is the category name)
                                 }
                             }
                         }
                     },
                     scales: {
                         x: {
-                            display: false
+                            display: false, // Hide x-axis (percentage scale)
+                            max: 100 // Max value for proficiency
                         },
                         y: {
                            grid: {
@@ -414,7 +536,7 @@
                            ticks: {
                                 color: '#475569', /* Darker tick labels for light theme */
                                 font: {
-                                    size: 14,
+                                    size: 12, /* Smaller font for individual skill labels */
                                     weight: '500'
                                 }
                            }
@@ -448,6 +570,62 @@
                     });
                 }, { threshold: 0.5 }); // Trigger when 50% of the list is visible
                 observer.observe(list);
+            });
+
+            // Video Modal Logic
+            const videoModal = document.getElementById('videoModal');
+            const videoPlayer = document.getElementById('videoPlayer');
+            const closeVideoModal = document.getElementById('closeVideoModal'); // Specific close button for video
+            const videoLinks = document.querySelectorAll('.video-link');
+
+            videoLinks.forEach(link => {
+                link.addEventListener('click', function(event) {
+                    event.preventDefault(); // Prevent default link behavior
+                    const videoUrl = this.dataset.videoUrl;
+                    videoPlayer.src = videoUrl; // Set the iframe src
+                    videoModal.classList.add('show'); // Show the modal
+                });
+            });
+
+            closeVideoModal.addEventListener('click', () => { // Use specific close button
+                videoModal.classList.remove('show'); // Hide the modal
+                videoPlayer.src = ''; // Stop the video by clearing the src
+            });
+
+            // Close video modal if clicked outside content
+            videoModal.addEventListener('click', (event) => {
+                if (event.target === videoModal) {
+                    videoModal.classList.remove('show');
+                    videoPlayer.src = '';
+                }
+            });
+
+            // Document Modal Logic
+            const documentModal = document.getElementById('documentModal');
+            const documentViewer = document.getElementById('documentViewer');
+            const closeDocumentModal = document.getElementById('closeDocumentModal'); // Specific close button for document
+            const documentLinks = document.querySelectorAll('.document-link');
+
+            documentLinks.forEach(link => {
+                link.addEventListener('click', function(event) {
+                    event.preventDefault(); // Prevent default link behavior
+                    const documentUrl = this.dataset.documentUrl;
+                    documentViewer.src = documentUrl; // Set the iframe src
+                    documentModal.classList.add('show'); // Show the modal
+                });
+            });
+
+            closeDocumentModal.addEventListener('click', () => { // Use specific close button
+                documentModal.classList.remove('show'); // Hide the modal
+                documentViewer.src = ''; // Clear the src
+            });
+
+            // Close document modal if clicked outside content
+            documentModal.addEventListener('click', (event) => {
+                if (event.target === documentModal) {
+                    documentModal.classList.remove('show');
+                    documentViewer.src = '';
+                }
             });
         });
     </script>
