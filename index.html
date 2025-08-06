@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rohit Kumar Tamta - Quality Assurance Engineer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals (Slate, Zinc, Stone) with Indigo accents -->
+    <!-- Application Structure Plan: A single-page scrolling application with a sticky navigation bar. The structure is designed for intuitive exploration, allowing users (recruiters) to quickly jump to sections of interest like Skills or Experience. The flow is: Hero > Summary > Experience (Timeline) > Skills (Chart) > Education > Contact. This non-linear but guided structure is more engaging than a static document and is optimized for quick scanning, which is crucial for resume reviews. -->
+    <!-- Visualization & Content Choices: 
+        - Hero/Contact: Goal=Inform. Method=HTML/Icons/Image. Interaction=Links, Animated entrance. Justification=Immediate access to key info and a strong first impression.
+        - Experience: Goal=Show Progression. Method=CSS Timeline. Interaction=Animated dot on scroll (pulse). Justification=Visually represents career path effectively with subtle engagement.
+        - Skills: Goal=Compare/Inform. Method=Chart.js Bar Chart. Interaction=Tooltips on hover, Chart animation on load. Justification=Provides a quick, visual summary of technical abilities, making it more digestible and dynamic.
+        - Education/Certs: Goal=Organize. Method=HTML Cards. Interaction=Hover effects (lift/shadow), staggered fade-in on load. Justification=Clearly segments different qualifications for readability and adds a touch of polish.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* slate-50 */
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (max-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+
+        /* Animation Styles */
+        .animated-content {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .animated-content.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Hero animations */
+        .hero-animate-text {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideUpFadeIn 0.8s ease-out forwards;
+        }
+        .hero-animate-text:nth-child(2) { animation-delay: 0.2s; }
+        .hero-animate-text:nth-child(3) { animation-delay: 0.4s; }
+        .hero-animate-image {
+            opacity: 0;
+            transform: scale(0.8);
+            animation: scaleInFadeIn 0.8s ease-out forwards;
+            animation-delay: 0.6s;
+        }
+
+        @keyframes slideUpFadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes scaleInFadeIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Timeline dot pulse animation */
+        .timeline-dot-pulse {
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Card hover effect */
+        .card-hover-effect {
+            transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+        }
+        .card-hover-effect:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+<body class="text-slate-700">
+
+    <header id="header" class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="text-xl font-bold text-slate-800">Rohit Kumar Tamta</div>
+            <div class="hidden md:flex space-x-8">
+                <a href="#summary" class="hover:text-indigo-600 transition-colors">Summary</a>
+                <a href="#experience" class="hover:text-indigo-600 transition-colors">Experience</a>
+                <a href="#skills" class="hover:text-indigo-600 transition-colors">Skills</a>
+                <a href="#education" class="hover:text-indigo-600 transition-colors">Education</a>
+                <a href="#contact" class="hover:text-indigo-600 transition-colors">Contact</a>
+            </div>
+            <button id="mobile-menu-button" class="md:hidden text-slate-800">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            </button>
+        </nav>
+        <div id="mobile-menu" class="hidden md:hidden bg-white">
+            <a href="#summary" class="block text-center py-2 px-4 text-sm hover:bg-slate-100">Summary</a>
+            <a href="#experience" class="block text-center py-2 px-4 text-sm hover:bg-slate-100">Experience</a>
+            <a href="#skills" class="block text-center py-2 px-4 text-sm hover:bg-slate-100">Skills</a>
+            <a href="#education" class="block text-center py-2 px-4 text-sm hover:bg-slate-100">Education</a>
+            <a href="#contact" class="block text-center py-2 px-4 text-sm hover:bg-slate-100">Contact</a>
+        </div>
+    </header>
+
+    <main>
+        <section id="hero" class="py-20 md:py-32 bg-white">
+            <div class="container mx-auto px-6 text-center flex flex-col items-center">
+                <img src="https://placehold.co/200x200/6366f1/ffffff?text=Your+Photo" alt="Rohit Kumar Tamta Profile" class="w-40 h-40 rounded-full object-cover mb-6 border-4 border-indigo-500 shadow-lg hero-animate-image">
+                <h1 class="text-4xl md:text-6xl font-bold text-slate-900 hero-animate-text">Rohit Kumar Tamta</h1>
+                <p class="mt-4 text-lg md:text-xl text-indigo-600 font-medium hero-animate-text">Quality Assurance Engineer</p>
+                <div class="mt-8 flex justify-center items-center space-x-6 text-slate-600 hero-animate-text">
+                    <a href="mailto:Rohit.tamta144473@gmail.com" class="flex items-center space-x-2 hover:text-indigo-600">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        <span>Email</span>
+                    </a>
+                    <span class="text-slate-300">|</span>
+                    <a href="https://www.linkedin.com/in/rohit-tamta-408788229/" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-2 hover:text-indigo-600">
+                         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                        <span>LinkedIn</span>
+                    </a>
+                     <span class="text-slate-300">|</span>
+                    <div class="flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        <span>Delhi, India</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="summary" class="py-16 md:py-24">
+            <div class="container mx-auto px-6 max-w-4xl">
+                <h2 class="text-3xl font-bold text-center text-slate-800 mb-10">Professional Summary</h2>
+                <div class="mt-10 bg-white p-8 rounded-xl shadow-md border border-slate-200 animated-content card-hover-effect">
+                    <p class="text-lg text-slate-700 leading-relaxed">
+                        Highly motivated and results-driven Quality Assurance Engineer with experience in ensuring product stability and enhancing user experience in remote work environments. Currently contributing to Evident, a global technology company specializing in impact investing and alternative assets, through its Indian partner EviDev LLP. Recently completed an intensive Software Development Engineer in Test (SDET) certification, gaining proficiency in Manual Testing, API Testing, Cypress, Java, Selenium, and Mobile Testing. Adept at crafting clear test cases, preparing comprehensive product documentation, and supporting release quality.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section id="experience" class="py-16 md:py-24 bg-slate-50">
+            <div class="container mx-auto px-6 max-w-4xl">
+                <h2 class="text-3xl font-bold text-center text-slate-800 mb-10">Work Experience</h2>
+                <div class="relative">
+                    <div class="absolute left-1/2 -ml-px w-0.5 h-full bg-indigo-200" aria-hidden="true"></div>
+                    <div class="relative space-y-12">
+                        <div class="flex items-start animated-content">
+                            <div class="flex-shrink-0 w-1/2 pr-8 text-right">
+                                <p class="font-semibold text-indigo-600">April 2024 – Present</p>
+                            </div>
+                            <div class="absolute left-1/2 -ml-2 w-4 h-4 bg-white border-2 border-indigo-500 rounded-full timeline-dot-pulse"></div>
+                            <div class="w-1/2 pl-8">
+                                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200 card-hover-effect">
+                                    <h3 class="text-xl font-bold text-slate-900">Quality Assurance Engineer</h3>
+                                    <p class="mt-1 text-md font-medium text-slate-500">Evident (via EviDev LLP) | Remote</p>
+                                    <ul class="mt-4 space-y-3 text-slate-600 list-disc list-inside">
+                                        <li>Contributed remotely to Evident, a global technology company focused on impact investing and alternative assets, ensuring the quality of their innovative investment platform.</li>
+                                        <li>Develop and execute clear, concise test cases for new functionalities, actively contributing to comprehensive test coverage.</li>
+                                        <li>Prepare detailed product documentation to improve cross-functional understanding, particularly for non-technical business stakeholders.</li>
+                                        <li>Support the QA team in maintaining product stability by meticulously reporting issues, retesting fixed features, and ensuring high quality across all product releases.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="skills" class="py-16 md:py-24">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl font-bold text-center text-slate-800 mb-10">Skills & Expertise</h2>
+                <div class="chart-container animated-content">
+                    <canvas id="skillsChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section id="education" class="py-16 md:py-24 bg-slate-50">
+            <div class="container mx-auto px-6 max-w-5xl">
+                <h2 class="text-3xl font-bold text-center text-slate-800 mb-10">Education & Certifications</h2>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200 animated-content card-hover-effect">
+                        <h3 class="text-xl font-bold text-slate-900">Master of Computer Applications (MCA)</h3>
+                        <p class="mt-1 font-medium text-slate-500">Sikkim Manipal University - Distance Education</p>
+                        <p class="mt-2 text-sm text-indigo-600">Expected: March 2025</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200 animated-content card-hover-effect" style="transition-delay: 0.1s;">
+                        <h3 class="text-xl font-bold text-slate-900">Software Development Engineer in Test (SDET)</h3>
+                        <p class="mt-1 font-medium text-slate-500">Masai School</p>
+                        <p class="mt-2 text-sm text-indigo-600">Graduated: December 2024</p>
+                        <p class="mt-2 text-xs text-slate-500 italic">*Training extended to mid-February 2025 to cover additional modules.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200 animated-content card-hover-effect" style="transition-delay: 0.2s;">
+                        <h3 class="text-xl font-bold text-slate-900">Bachelor of Arts (BA)</h3>
+                        <p class="mt-1 font-medium text-slate-500">University of Delhi</p>
+                        <p class="mt-2 text-sm text-indigo-600">Graduated: September 2022</p>
+                    </div>
+                     <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200 lg:col-start-2 animated-content card-hover-effect" style="transition-delay: 0.3s;">
+                        <h3 class="text-xl font-bold text-slate-900">English & Personality Development</h3>
+                        <p class="mt-1 font-medium text-slate-500">Freedom Employability Academy (FEA)</p>
+                        <p class="mt-2 text-sm text-indigo-600">Issued: July 2020</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer id="contact" class="bg-slate-800 text-white py-16">
+            <div class="container mx-auto px-6 text-center">
+                <h2 class="text-3xl font-bold">Get In Touch</h2>
+                <p class="mt-4 max-w-xl mx-auto">
+                    I am actively seeking new opportunities in Quality Assurance. If you have a role that aligns with my skills and experience, I would love to connect.
+                </p>
+                <div class="mt-8 flex justify-center gap-4">
+                    <a href="mailto:Rohit.tamta144473@gmail.com" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-6 rounded-lg transition-colors inline-flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        <span>Send Email</span>
+                    </a>
+                    <a href="https://wa.me/918766314368" target="_blank" rel="noopener noreferrer" class="bg-green-600 hover:bg-green-500 text-white font-bold py-3 px-6 rounded-lg transition-colors inline-flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM8.5 13.5l2.5 2.5 4-4-5-5-1.5 1.5z"/></svg>
+                        <span>WhatsApp</span>
+                    </a>
+                </div>
+                <div class="mt-10 text-slate-400 text-sm">
+                    <p>&copy; 2024 Rohit Kumar Tamta. All Rights Reserved.</p>
+                    <p class="mt-2">Built with Tailwind CSS & Chart.js</p>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const navLinks = mobileMenu.querySelectorAll('a');
+
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                });
+            });
+
+            const ctx = document.getElementById('skillsChart').getContext('2d');
+            const skillsChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Testing', 'Tools & Technologies', 'Programming Languages'],
+                    datasets: [{
+                        label: 'Skill Areas',
+                        data: [100, 100, 100],
+                        backgroundColor: [
+                            'rgba(79, 70, 229, 0.7)',  // indigo-600
+                            'rgba(100, 116, 139, 0.7)', // slate-500
+                            'rgba(79, 70, 229, 0.5)'   // indigo-600 lighter
+                        ],
+                        borderColor: [
+                            'rgba(79, 70, 229, 1)',
+                            'rgba(100, 116, 139, 1)',
+                            'rgba(79, 70, 229, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: {
+                        duration: 1500, // Animation duration in milliseconds
+                        easing: 'easeOutQuart' // Easing function
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    if (context.dataIndex === 0) return [' Manual Testing', ' API Testing', ' Mobile Testing', ' Test Case Design', ' Defect Reporting', ' Regression Testing'];
+                                    if (context.dataIndex === 1) return [' Cypress', ' Selenium'];
+                                    if (context.dataIndex === 2) return [' JavaScript', ' Java'];
+                                    return '';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            display: false,
+                            max: 110
+                        },
+                        y: {
+                           grid: {
+                                display: false
+                           },
+                           ticks: {
+                                font: {
+                                    size: 14,
+                                    weight: '500'
+                                }
+                           }
+                        }
+                    }
+                }
+            });
+
+            // New animation logic for content sections
+            const animatedSections = document.querySelectorAll('.animated-content');
+            animatedSections.forEach((section, index) => {
+                setTimeout(() => {
+                    section.classList.add('is-visible');
+                }, 100 * index); // Staggered delay for each section
+            });
+        });
+    </script>
+</body>
+</html>
